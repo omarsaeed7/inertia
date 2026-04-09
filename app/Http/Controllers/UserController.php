@@ -33,7 +33,7 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'type' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
-            'image' => 'nullable|string', // This will receive the path from FilePond
+            'image' => 'nullable|string', 
         ]);
 
 
@@ -42,10 +42,10 @@ class UserController extends Controller
             'first_name' => $validated['first_name'] ?? null,
             'last_name' => $validated['last_name'] ?? null,
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']), // IMPORTANT: Hash the password!
+            'password' => Hash::make($validated['password']),
             'type' => $validated['type'] ?? null,
             'country' => $validated['country'] ?? null,
-            'image' => json_decode($validated['image'], true) ?? null, // Save the image path
+            'image' => json_decode($validated['image'], true) ?? null,
         ]);
 
         return redirect('/users');

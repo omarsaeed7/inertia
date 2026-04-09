@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,11 +17,7 @@ class UploadController extends Controller
             $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
 
             $path = $file->storeAs($folder, $filename, 'public');
-
-            // Return the path directly as serverId
-            return response()->json(
-                'storage/' . $path,
-            );
+            return response()->json('storage/' . $path);
         }
 
         return response()->json(['error' => 'No file uploaded'], 422);
@@ -32,7 +27,6 @@ class UploadController extends Controller
     {
         $raw = $request->getContent();
         $filepath = json_decode($raw, true) ?? $raw;
-        dd($filepath,trim($raw, '"'));
         if (is_string($filepath) && str_starts_with($filepath, 'storage/')) {
             $path = str_replace('storage/', '', $filepath);
             Storage::disk('public')->delete($path);
