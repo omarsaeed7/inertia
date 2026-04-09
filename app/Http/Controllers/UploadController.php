@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ class UploadController extends Controller
 
             $path = $file->storeAs($folder, $filename, 'public');
 
+            // Return the path directly as serverId
             return response()->json([
                 'serverId' => 'storage/'.$path,
                 'success' => true,

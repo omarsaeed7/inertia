@@ -4,11 +4,16 @@ import { FilePond, registerPlugin } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import Layout from "../../Layout";
 
-registerPlugin();
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css";
+
+// Register plugins
+registerPlugin(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 
 function Create() {
     const pondRef = useRef(null);
-    
+
     const { data, setData, post, processing, errors } = useForm({
         name: "",
         first_name: "",
@@ -22,10 +27,8 @@ function Create() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Submitting with image:', data.image);
-        post("/users", {
-            forceFormData: true,
-        });
+        console.log("Submitting with image:", data.image);
+        post("/users");
     };
 
     return (
@@ -146,7 +149,7 @@ function Create() {
                     />
                 </div>
 
-                <div className="mb-6" style={{ marginBottom: "100px" }}>
+                <div className="mb-6"  style={{ marginBottom: "100px" }}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                         Image
                     </label>
@@ -167,7 +170,7 @@ function Create() {
                                 },
                             },
                             revert: {
-                                url: "/upload",
+                                method: "DELETE",
                                 headers: {
                                     "X-CSRF-TOKEN": document.querySelector(
                                         'meta[name="csrf-token"]',
@@ -175,18 +178,22 @@ function Create() {
                                 },
                             },
                         }}
-                        onprocessfilepond={(error, file) => {
+                        onprocessfile={(error, file) => {
                             if (!error && file.serverId) {
+                                console.log(
+                                    "File uploaded, serverId:",
+                                    file.serverId,
+                                );
                                 setData("image", file.serverId);
                             }
                         }}
                         onremovefile={(error, file) => {
                             if (!error) {
+                                console.log("File removed");
                                 setData("image", "");
                             }
                         }}
                     />
-                    <input type="hidden" name="image" value={data.image} />
                     {errors.image && (
                         <p className="text-red-500 text-sm mt-1">
                             {errors.image}

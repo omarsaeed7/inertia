@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -33,17 +34,18 @@ class UserController extends Controller
             'password' => 'required|string|min:8',
             'type' => 'nullable|string|max:255',
             'country' => 'nullable|string|max:255',
-            'image' => 'nullable|string',
+            'image' => 'nullable|string', // This will receive the path from FilePond
         ]);
+        
         User::create([
             'name' => $validated['name'],
             'first_name' => $validated['first_name'] ?? null,
             'last_name' => $validated['last_name'] ?? null,
             'email' => $validated['email'],
-            'password' => $validated['password'],
+            'password' => Hash::make($validated['password']), // IMPORTANT: Hash the password!
             'type' => $validated['type'] ?? null,
             'country' => $validated['country'] ?? null,
-            'image' => $validated['image'] ?? null,
+            'image' => $validated['image'] ?? null, // Save the image path
         ]);
 
         return redirect('/users');
