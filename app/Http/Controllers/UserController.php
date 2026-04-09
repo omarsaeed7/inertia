@@ -25,7 +25,6 @@ class UserController extends Controller
     public function store(Request $request)
     {
         Log::info('Request data: ', $request->all());
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'first_name' => 'nullable|string|max:255',
@@ -36,7 +35,8 @@ class UserController extends Controller
             'country' => 'nullable|string|max:255',
             'image' => 'nullable|string', // This will receive the path from FilePond
         ]);
-        
+
+
         User::create([
             'name' => $validated['name'],
             'first_name' => $validated['first_name'] ?? null,
@@ -45,7 +45,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']), // IMPORTANT: Hash the password!
             'type' => $validated['type'] ?? null,
             'country' => $validated['country'] ?? null,
-            'image' => $validated['image'] ?? null, // Save the image path
+            'image' => json_decode($validated['image'], true) ?? null, // Save the image path
         ]);
 
         return redirect('/users');

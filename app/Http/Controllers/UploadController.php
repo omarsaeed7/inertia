@@ -15,15 +15,14 @@ class UploadController extends Controller
 
         if ($file) {
             $folder = 'uploads/users';
-            $filename = time().'_'.Str::random(10).'.'.$file->getClientOriginalExtension();
+            $filename = time() . '_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
 
             $path = $file->storeAs($folder, $filename, 'public');
 
             // Return the path directly as serverId
-            return response()->json([
-                'serverId' => 'storage/'.$path,
-                'success' => true,
-            ]);
+            return response()->json(
+                'storage/' . $path,
+            );
         }
 
         return response()->json(['error' => 'No file uploaded'], 422);
@@ -31,8 +30,10 @@ class UploadController extends Controller
 
     public function revert(Request $request)
     {
-        $filepath = $request->getContent();
-        if ($filepath) {
+        $raw = $request->getContent();
+        $filepath = json_decode($raw, true) ?? $raw;
+        dd($filepath,trim($raw, '"'));
+        if (is_string($filepath) && str_starts_with($filepath, 'storage/')) {
             $path = str_replace('storage/', '', $filepath);
             Storage::disk('public')->delete($path);
         }
